@@ -1,9 +1,23 @@
+import max.functional as F
+from max.dtype import DType
+from max.graph import DimLike
 from max.nn import Module
 from max.tensor import Tensor
 from step_01 import GPT2Config
 from step_02 import GPT2MLP
 from step_04 import GPT2MultiHeadAttention
-from step_05 import LayerNorm
+
+
+class LayerNorm(Module):
+    def __init__(self, dim: DimLike, *, eps: float = 1e-5) -> None:
+        super().__init__()
+        self.eps = eps
+        self.weight = Tensor.ones(shape=[dim], dtype=DType.bfloat16)
+        self.bias = Tensor.zeros(shape=[dim], dtype=DType.bfloat16)
+
+    def forward(self, x: Tensor) -> Tensor:
+        # x: [...,D]
+        return F.layer_norm(x, gamma=self.weight, beta=self.bias, epsilon=self.eps)
 
 
 class GPT2Block(Module):
