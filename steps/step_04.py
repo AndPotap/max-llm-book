@@ -54,20 +54,20 @@ class GPT2MultiHeadAttention(Module):
         self.c_proj = None
 
     def _split_heads(
-        self, tensor: Tensor, num_heads: int, attn_head_size: int
+        self, tensor: Tensor, num_heads: int, attn_head_dim: int
     ) -> Tensor:
-        """Split the last dimension into (num_heads, head_size).
+        """Split the last dimension into (num_heads, head_dim).
 
         Args:
             tensor: Input tensor, shape [batch, seq_length, n_embd]
             num_heads: Number of attention heads
-            attn_head_size: Dimension of each head
+            attn_head_dim: Dimension of each head
 
         Returns:
-            Tensor with shape [batch, num_heads, seq_length, head_size]
+            Tensor with shape [batch, num_heads, seq_length, head_dim]
         """
         # TODO: Add head dimension
-        # Hint: new_shape = tensor.shape[:-1] + [num_heads, attn_head_size]
+        # Hint: new_shape = tensor.shape[:-1] + [num_heads, attn_head_dim]
         # Hint: tensor = tensor.reshape(new_shape)
         pass
 
@@ -76,14 +76,14 @@ class GPT2MultiHeadAttention(Module):
         return None
 
     def _merge_heads(
-        self, tensor: Tensor, num_heads: int, attn_head_size: int
+        self, tensor: Tensor, num_heads: int, attn_head_dim: int
     ) -> Tensor:
         """Merge attention heads back to original shape.
 
         Args:
-            tensor: Input tensor, shape [batch, num_heads, seq_length, head_size]
+            tensor: Input tensor, shape [batch, num_heads, seq_length, head_dim]
             num_heads: Number of attention heads
-            attn_head_size: Dimension of each head
+            attn_head_dim: Dimension of each head
 
         Returns:
             Tensor with shape [batch, seq_length, n_embd]
@@ -93,7 +93,7 @@ class GPT2MultiHeadAttention(Module):
         pass
 
         # TODO: Flatten head dimensions
-        # Hint: new_shape = tensor.shape[:-2] + [num_heads * attn_head_size]
+        # Hint: new_shape = tensor.shape[:-2] + [num_heads * attn_head_dim]
         # Hint: return tensor.reshape(new_shape)
         return None
 
@@ -101,12 +101,12 @@ class GPT2MultiHeadAttention(Module):
         """Compute attention for all heads in parallel.
 
         Args:
-            query: Query tensor, shape [batch, num_heads, seq_length, head_size]
-            key: Key tensor, shape [batch, num_heads, seq_length, head_size]
-            value: Value tensor, shape [batch, num_heads, seq_length, head_size]
+            query: Query tensor, shape [batch, num_heads, seq_length, head_dim]
+            key: Key tensor, shape [batch, num_heads, seq_length, head_dim]
+            value: Value tensor, shape [batch, num_heads, seq_length, head_dim]
 
         Returns:
-            Attention output, shape [batch, num_heads, seq_length, head_size]
+            Attention output, shape [batch, num_heads, seq_length, head_dim]
         """
         # TODO: Implement attention computation
         # The same 5-step process: scores, scale, mask, softmax, weighted sum
