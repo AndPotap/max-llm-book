@@ -14,7 +14,7 @@ self-attention (the next step). This creates a
 [mask matrix](https://docs.modular.com/glossary/ai/attention-mask/) that
 prevents the model from _seeing_ future tokens when predicting the next token.
 The mask sets attention scores to negative infinity (`-inf`) for future
-positions. After softmax, these `-inf` values become zero probability, blocking
+positions. After softmax, these `-inf` values become zero, blocking
 information flow from later tokens.
 
 <figure>
@@ -80,11 +80,11 @@ You'll create the causal mask in several steps:
    - [`DType`](https://docs.modular.com/max/api/python/dtype) from `max.dtype` -
      data type specification
    - [`functional`](https://docs.modular.com/max/api/python/functional)
-     as `F` from `max.nn` - functional operations library
+     as `F` from `max.functional` - functional operations library
    - [`Tensor`](https://docs.modular.com/max/api/python/tensor)
      from `max.tensor` - tensor operations
    - [`Dim`](https://docs.modular.com/max/api/python/graph/dim/#max.graph.dim.Dim)
-     from `graph.dim` - dimension handling
+     from `max.graph` - dimension handling
 
 2. **Add @F.functional decorator**: This converts the function to a MAX graph operation.
 
