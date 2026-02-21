@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class GPT2Config:
     vocab_size: int = 50_257
