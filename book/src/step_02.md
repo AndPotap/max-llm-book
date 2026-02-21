@@ -34,7 +34,7 @@ information.
 function. GPT-2 uses `approximate="tanh"` for the tanh-based approximation
 instead of the exact computation. This approximation was faster when GPT-2 was
 implemented, but while exact GELU is fast enough now, we use the approximation
-to match the original weights.
+to match the original architecture.
 
 **Projection layer (`c_proj`)**: Projects back from 3,072 to 768 dimensions
 using another linear layer. This returns to the embedding dimension so outputs

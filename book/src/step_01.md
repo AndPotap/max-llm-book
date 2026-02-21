@@ -32,7 +32,7 @@ a different aspect of the model's architecture:
   odd number is actually 50,000 Byte Pair Encoding (BPE) tokens + 256 byte-level
   tokens (fallback for rare characters) + 1 special token.
 - `n_positions`: Maximum sequence length, also called the context window
-  (default: 1,024). Longer sequences require quadratic memory in attention.
+  (default: 1,024). The memory required by the model increases quadratically in `n_positions`.
 - `n_embd`: Embedding dimension, or the size of the hidden states that flow
   through the model (default: 768). This determines the model's capacity to
   represent information.
