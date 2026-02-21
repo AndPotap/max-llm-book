@@ -1,93 +1,40 @@
-# ===----------------------------------------------------------------------=== #
-#
-# This file is Modular Inc proprietary.
-#
-# ===----------------------------------------------------------------------=== #
-"""
-Step 07: Stacking Transformer Blocks
-
-Stack multiple transformer blocks with embeddings to create
-the complete GPT-2 model architecture.
-
-Tasks:
-1. Import Tensor, Embedding, Module, Sequential, and previous components
-2. Create token and position embeddings
-3. Stack n_layer transformer blocks using Sequential
-4. Create final layer normalization
-5. Implement forward pass: embeddings -> blocks -> layer norm
-
-Run: pixi run s10
-"""
-
-# TODO: Import required modules
-# Hint: You'll need Tensor from max.tensor
-# Hint: You'll need Embedding, Module, Sequential from max.nn
-
+import max.functional as F
+from max.dtype import DType
+from max.graph import DimLike
+from max.nn import Embedding, Module, Sequential
 from max.tensor import Tensor
 from step_01 import GPT2Config
+from step_06 import GPT2Block
+
+
+class LayerNorm(Module):
+    def __init__(self, dim: DimLike, *, eps: float = 1e-5) -> None:
+        super().__init__()
+        self.eps = eps
+        self.weight = Tensor.ones(shape=[dim], dtype=DType.bfloat16)
+        self.bias = Tensor.zeros(shape=[dim], dtype=DType.bfloat16)
+
+    def forward(self, x: Tensor) -> Tensor:
+        # x: [...,D]
+        return F.layer_norm(x, gamma=self.weight, beta=self.bias, epsilon=self.eps)
 
 
 class MaxGPT2Model(Module):
-    """Complete GPT-2 transformer model."""
-
     def __init__(self, config: GPT2Config) -> None:
-        """Initialize GPT-2 model.
-
-        Args:
-            config: GPT2Config containing model hyperparameters
-        """
         super().__init__()
-
-        # TODO: Create token embeddings
-        # Hint: Use Embedding(config.vocab_size, dim=config.n_embd)
-        self.wte = None
-
-        # TODO: Create position embeddings
-        # Hint: Use Embedding(config.n_positions, dim=config.n_embd)
-        self.wpe = None
-
-        # TODO: Stack transformer blocks
-        # Hint: Use Sequential(*(GPT2Block(config) for _ in range(config.n_layer)))
-        # This creates config.n_layer blocks (12 for GPT-2 base)
-        self.h = None
-
-        # TODO: Create final layer normalization
-        # Hint: Use LayerNorm(config.n_embd, eps=config.layer_norm_epsilon)
-        self.ln_f = None
+        self.wte = Embedding(config.vocab_size, dim=config.n_embd)
+        self.wpe = Embedding(config.n_positions, dim=config.n_embd)
+        self.h = Sequential(*(GPT2Block(config) for _ in range(config.n_layer)))
+        self.ln_f = LayerNorm(config.n_embd, eps=config.layer_norm_epsilon)
 
     def forward(self, input_ids: Tensor) -> Tensor:
-        """Forward pass through the transformer.
+        batch_size, seq_length = input_ids.shape
 
-        Args:
-            input_ids: Token IDs, shape [batch, seq_length]
+        tok_embeds = self.wte(input_ids)
+        position_indices = Tensor.arange(seq_length, dtype=input_ids.dtype, device=input_ids.device)
+        pos_embeds = self.wpe(position_indices)
 
-        Returns:
-            Hidden states, shape [batch, seq_length, n_embd]
-        """
-        # TODO: Get batch size and sequence length
-        # Hint: batch_size, seq_length = input_ids.shape
-        pass
-
-        # TODO: Get token embeddings
-        # Hint: tok_embeds = self.wte(input_ids)
-        pass
-
-        # TODO: Get position embeddings
-        # Hint: Create position indices with Tensor.arange(seq_length, dtype=input_ids.dtype, device=input_ids.device)
-        # Hint: pos_embeds = self.wpe(position_indices)
-        pass
-
-        # TODO: Combine embeddings
-        # Hint: x = tok_embeds + pos_embeds
-        pass
-
-        # TODO: Apply transformer blocks
-        # Hint: x = self.h(x)
-        pass
-
-        # TODO: Apply final layer norm
-        # Hint: x = self.ln_f(x)
-        pass
-
-        # TODO: Return the output
-        return None
+        x = tok_embeds + pos_embeds
+        x = self.h(x)
+        x = self.ln_f(x)
+        return x
