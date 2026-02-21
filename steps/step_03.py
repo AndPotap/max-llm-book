@@ -12,7 +12,7 @@ Tasks:
 1. Import functional module (as F) and Tensor from max.nn
 2. Add @F.functional decorator to the causal_mask function
 3. Create a constant tensor filled with negative infinity
-4. Broadcast the mask to the correct shape (sequence_length, n)
+4. Broadcast the mask to the correct shape (seq_length, n)
 5. Apply band_part to create the lower triangular causal structure
 
 Run: pixi run s03
@@ -34,7 +34,7 @@ from max.tensor import Tensor
 
 
 def causal_mask(
-    sequence_length: DimLike,
+    seq_length: DimLike,
     num_tokens: DimLike,
     *,
     dtype: DType,
@@ -43,7 +43,7 @@ def causal_mask(
     """Create a causal mask for autoregressive attention.
 
     Args:
-        sequence_length: Length of the sequence.
+        seq_length: Length of the sequence.
         num_tokens: Number of tokens.
         dtype: Data type for the mask.
         device: Device to create the mask on.
@@ -52,7 +52,7 @@ def causal_mask(
         A causal mask tensor.
     """
     # Calculate total sequence length
-    n = Dim(sequence_length) + num_tokens
+    n = Dim(seq_length) + num_tokens
 
     # 3: Create a constant tensor filled with negative infinity
     # TODO: Use Tensor.constant() with float("-inf"), dtype, and device parameters
@@ -61,7 +61,7 @@ def causal_mask(
     mask = None
 
     # 4: Broadcast the mask to the correct shape
-    # TODO: Use F.broadcast_to() to expand mask to shape (sequence_length, n)
+    # TODO: Use F.broadcast_to() to expand mask to shape (seq_length, n)
     # https://docs.modular.com/max/api/python/nn/functional#max.nn.functional.broadcast_to
     # Hint: This creates a 2D attention mask matrix
     mask = None
