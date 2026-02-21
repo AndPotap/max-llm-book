@@ -1,7 +1,8 @@
 from max.nn import Embedding, Module, Sequential
 from max.tensor import Tensor
 from step_01 import GPT2Config
-from step_06 import GPT2Block, LayerNorm
+from step_05 import LayerNorm
+from step_06 import GPT2Block
 
 
 class MaxGPT2Model(Module):

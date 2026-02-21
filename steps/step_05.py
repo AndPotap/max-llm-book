@@ -11,8 +11,8 @@ class LayerNorm(Module):
         self.eps = eps
         # @ap: why isn't device or dtype set?
         # I had to add dtype to pass the tests
-        self.weight = Tensor.ones(shape=[dim], dtype=DType.float32)
-        self.bias = Tensor.zeros(shape=[dim], dtype=DType.float32)
+        self.weight = Tensor.ones(shape=[dim], dtype=DType.bfloat16)
+        self.bias = Tensor.zeros(shape=[dim], dtype=DType.bfloat16)
 
     def forward(self, x: Tensor) -> Tensor:
         # x: [...,D]
