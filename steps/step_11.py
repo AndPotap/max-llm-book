@@ -1,6 +1,7 @@
+import torch
+from max.driver import CPU
 from max.dtype import DType
 from max.graph import DeviceRef
-from max.nn import Linear
 from max.tensor import TensorType, defaults
 from step_01 import GPT2Config
 from step_08 import MaxGPT2LMHeadModel
@@ -11,21 +12,24 @@ from transformers import GPT2LMHeadModel, GPT2Tokenizer
 def run_model() -> None:
     hf_model = GPT2LMHeadModel.from_pretrained("gpt2")
     print(f"Loaded HuggingFace model:\n{hf_model}")
+    hf_model = hf_model.to(torch.bfloat16)
+
+    state = hf_model.state_dict()
+    for key, val in state.items():
+        if any(case in key for case in ["c_attn", "c_proj", "c_fc"]):
+            state[key] = state[key].T.contiguous()
 
     _, device = defaults()
     print(f"Using device: {device}")
     config = GPT2Config()
     max_model = MaxGPT2LMHeadModel(config)
     print(f"Model has {config.n_layer} layers, {config.n_head} heads, {config.n_embd} embedding dim")
-
-    max_model.load_state_dict(hf_model.state_dict())
+    max_model.to(CPU())
+    print("On CPU")
+    max_model.load_state_dict(state)
+    print("Loaded model")
     max_model.to(device)
-
-    for name, child in max_model.descendents:
-        if isinstance(child, Linear):
-            if any(layer_name in name for layer_name in ["c_attn", "c_proj", "c_fc"]):
-                print(f"Transposing {name}: {child.weight.shape}")
-                child.weight = child.weight.T
+    print(f"Model on {device=}")
 
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     tokenizer.pad_token = tokenizer.eos_token
