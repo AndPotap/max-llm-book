@@ -1,21 +1,3 @@
-# ===----------------------------------------------------------------------=== #
-#
-# This file is Modular Inc proprietary.
-#
-# ===----------------------------------------------------------------------=== #
-"""
-Step 09: Encode and decode tokens
-
-This module provides utility functions to tokenize input text
-and decode token IDs back to text using a tokenizer.
-
-Tasks:
-1. Tokenize text and convert to tensor
-2. Decode token IDs back to text
-
-Run: pixi run s09
-"""
-
 # TODO: Import required modules
 # Hint: You'll need numpy as np
 # Hint: You'll need CPU from max.driver
