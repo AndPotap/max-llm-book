@@ -133,16 +133,6 @@ class GPT2MultiHeadAttention(Module):
         return tensor.reshape(new_shape)
 
     def _attn(self, query: Tensor, key: Tensor, value: Tensor) -> Tensor:
-        """Compute attention for all heads in parallel.
-
-        Args:
-            query: Query tensor, shape [batch, num_heads, seq_length, head_dim]
-            key: Key tensor, shape [batch, num_heads, seq_length, head_dim]
-            value: Value tensor, shape [batch, num_heads, seq_length, head_dim]
-
-        Returns:
-            Attention output, shape [batch, num_heads, seq_length, head_dim]
-        """
         _, num_heads, seq_length, head_dim = query.shape
         attn_weights = query @ key.transpose(-1, -2)
         attn_weights = attn_weights / math.sqrt(int(head_dim))
@@ -169,11 +159,9 @@ class GPT2MultiHeadAttention(Module):
 
 
 class LayerNorm(Module):
-    def __init__(self, dim: DimLike, *, eps: float = 1e-5) -> None:
+    def __init__(self, dim: DimLike, *, eps: float) -> None:
         super().__init__()
         self.eps = eps
-        # @ap: why isn't device or dtype set?
-        # I had to add dtype to pass the tests
         self.weight = Tensor.ones(shape=[dim], dtype=DType.bfloat16)
         self.bias = Tensor.zeros(shape=[dim], dtype=DType.bfloat16)
 
