@@ -20,7 +20,6 @@ Run: pixi run s09
 # Hint: You'll need numpy as np
 # Hint: You'll need CPU from max.driver
 # Hint: You'll need DType from max.dtype
-# Hint: You'll need Tensor from max.tensor
 
 from max.driver import Device
 from max.tensor import Tensor
