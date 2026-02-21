@@ -1,67 +1,19 @@
-# ===----------------------------------------------------------------------=== #
-#
-# This file is Modular Inc proprietary.
-#
-# ===----------------------------------------------------------------------=== #
-"""
-Step 05: Layer Normalization
-
-Implement layer normalization that normalizes activations for training stability.
-
-Tasks:
-1. Import functional module (as F) and Tensor from max.nn
-2. Initialize learnable weight (gamma) and bias (beta) parameters
-3. Apply layer normalization using F.layer_norm in the forward pass
-
-Run: pixi run s05
-"""
-
-# 1: Import the required modules from MAX
-# TODO: Import functional module from max.nn with the alias F
-# https://docs.modular.com/max/api/python/nn/functional
-
-# TODO: Import Tensor from max.tensor
-# https://docs.modular.com/max/api/python/tensor.Tensor
-
+import max.functional as F
+from max.dtype import DType
 from max.graph import DimLike
 from max.nn import Module
 from max.tensor import Tensor
 
 
 class LayerNorm(Module):
-    """Layer normalization module.
-
-    Args:
-        dim: Dimension to normalize over.
-        eps: Epsilon for numerical stability.
-    """
-
     def __init__(self, dim: DimLike, *, eps: float = 1e-5) -> None:
         super().__init__()
         self.eps = eps
-
-        # 2: Initialize learnable weight and bias parameters
-        # TODO: Create self.weight as a Tensor of ones with shape [dim]
-        # https://docs.modular.com/max/api/python/tensor#max.tensor.Tensor.ones
-        # Hint: This is the gamma parameter in layer normalization
-        self.weight = None
-
-        # TODO: Create self.bias as a Tensor of zeros with shape [dim]
-        # https://docs.modular.com/max/api/python/tensor#max.tensor.Tensor.zeros
-        # Hint: This is the beta parameter in layer normalization
-        self.bias = None
+        # @ap: why isn't device or dtype set?
+        # I had to add dtype to pass the tests
+        self.weight = Tensor.ones(shape=[dim], dtype=DType.float32)
+        self.bias = Tensor.zeros(shape=[dim], dtype=DType.float32)
 
     def forward(self, x: Tensor) -> Tensor:
-        """Apply layer normalization.
-
-        Args:
-            x: Input tensor.
-
-        Returns:
-            Normalized tensor.
-        """
-        # 3: Apply layer normalization and return the result
-        # TODO: Use F.layer_norm() with x, gamma=self.weight, beta=self.bias, epsilon=self.eps
-        # https://docs.modular.com/max/api/python/nn/functional#max.nn.functional.layer_norm
-        # Hint: Layer normalization normalizes across the last dimension
-        return None
+        # x: [...,D]
+        return F.layer_norm(x, gamma=self.weight, beta=self.bias, epsilon=self.eps)
